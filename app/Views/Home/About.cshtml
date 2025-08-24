@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "Acerca del Sistema";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-6 mb-4">
+                <i class="bi bi-info-circle"></i> Acerca del Sistema de Gestión de Empleados
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear"></i> Información del Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>Descripción</h6>
+                    <p>
+                        Sistema completo de gestión de empleados y departamentos desarrollado en ASP.NET Core 8 (MVC) 
+                        con Entity Framework Core y SQL Server. Permite la administración integral de recursos humanos 
+                        incluyendo empleados, departamentos, asignaciones, títulos, salarios y auditoría de cambios.
+                    </p>
+
+                    <h6>Características Principales</h6>
+                    <ul>
+                        <li><strong>Gestión de Empleados:</strong> ABM completo con datos personales y laborales</li>
+                        <li><strong>Administración de Departamentos:</strong> Organización departamental y gerencias</li>
+                        <li><strong>Control de Títulos/Cargos:</strong> Histórico de posiciones con vigencias</li>
+                        <li><strong>Gestión de Salarios:</strong> Control salarial con auditoría automática</li>
+                        <li><strong>Asignaciones Departamentales:</strong> Histórico de asignaciones sin solapamientos</li>
+                        <li><strong>Autenticación Segura:</strong> Login con contraseñas cifradas</li>
+                        <li><strong>Reportes:</strong> Nómina, estructura organizacional y cambios salariales</li>
+                        <li><strong>Auditoría:</strong> Registro automático de cambios críticos</li>
+                    </ul>
+
+                    <h6>Tecnologías Utilizadas</h6>
+                    <ul>
+                        <li><strong>Backend:</strong> ASP.NET Core 8, C#</li>
+                        <li><strong>Frontend:</strong> Bootstrap 5, Razor Pages, jQuery</li>
+                        <li><strong>Base de Datos:</strong> SQL Server con Entity Framework Core</li>
+                        <li><strong>Seguridad:</strong> BCrypt para hash de contraseñas</li>
+                        <li><strong>Reportes:</strong> EPPlus (Excel), iTextSharp (PDF)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-code-square"></i> Información Técnica
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Versión:</strong></td>
+                            <td>1.0.0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Framework:</strong></td>
+                            <td>.NET 8.0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fecha:</strong></td>
+                            <td>Agosto 2025</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Base de Datos:</strong></td>
+                            <td>SQL Server</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Entorno:</strong></td>
+                            <td>@ViewContext.HttpContext.Request.Host.Host</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-shield-check"></i> Seguridad
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle text-success"></i> Autenticación por cookies</li>
+                        <li><i class="bi bi-check-circle text-success"></i> Contraseñas cifradas con BCrypt</li>
+                        <li><i class="bi bi-check-circle text-success"></i> Validación del lado del servidor</li>
+                        <li><i class="bi bi-check-circle text-success"></i> Control de acceso por roles</li>
+                        <li><i class="bi bi-check-circle text-success"></i> Auditoría de cambios</li>
+                        <li><i class="bi bi-check-circle text-success"></i> Sesiones seguras</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge"></i> Roles de Usuario
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-primary">Administrador</span>
+                        <p class="small text-muted mt-1">
+                            Acceso completo al sistema, gestión de usuarios y configuración.
+                        </p>
+                    </div>
+                    <div>
+                        <span class="badge bg-info">RRHH</span>
+                        <p class="small text-muted mt-1">
+                            Gestión de empleados, departamentos, salarios y generación de reportes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h6><i class="bi bi-lightbulb"></i> Soporte</h6>
+                <p class="mb-0">
+                    Para soporte técnico o reportar problemas, contacta al administrador del sistema.
+                    Todos los cambios críticos son registrados automáticamente para auditoría.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

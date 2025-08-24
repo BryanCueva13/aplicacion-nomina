@@ -1,0 +1,282 @@
+@{
+    Layout = "_Layout";
+}
+
+@model app.Controllers.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="display-6 mb-4">
+            <i class="bi bi-speedometer2"></i> Dashboard - Sistema de Gestión de Empleados
+        </h1>
+    </div>
+</div>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Empleados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalEmployees</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Departamentos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalDepartments</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-building fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Usuarios Activos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ActiveUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-person-check fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Nuevos Este Mes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.NewEmployeesThisMonth</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-person-plus fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos y información -->
+<div class="row">
+    <!-- Empleados por Departamento -->
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="bi bi-pie-chart"></i> Empleados por Departamento
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.EmployeesByDepartment.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            @foreach (var dept in Model.EmployeesByDepartment)
+                            {
+                                <tr>
+                                    <td>@dept.DepartmentName</td>
+                                    <td class="text-end">
+                                        <span class="badge bg-primary">@dept.Count</span>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay datos disponibles.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Próximos Aniversarios -->
+    <div class="col-xl-6 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="bi bi-calendar-event"></i> Próximos Aniversarios
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.UpcomingAnniversaries.Any())
+                {
+                    @foreach (var anniversary in Model.UpcomingAnniversaries)
+                    {
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-3">
+                                <i class="bi bi-gift text-warning"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">@anniversary.EmployeeName</div>
+                                <small class="text-muted">
+                                    @anniversary.HireDate.ToString("dd/MM") - @anniversary.YearsOfService años
+                                </small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No hay aniversarios próximos.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimos Cambios de Salario -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="bi bi-clock-history"></i> Últimos Cambios de Salario
+                </h6>
+                <a href="@Url.Action("Index", "Audit")" class="btn btn-sm btn-outline-primary">
+                    Ver Todos
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentSalaryChanges.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Empleado</th>
+                                    <th>Usuario</th>
+                                    <th>Detalle</th>
+                                    <th class="text-end">Salario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var log in Model.RecentSalaryChanges)
+                                {
+                                    <tr>
+                                        <td>
+                                            <small>@log.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </td>
+                                        <td>@log.Employee.FullName</td>
+                                        <td>
+                                            <span class="badge bg-secondary">@log.Usuario</span>
+                                        </td>
+                                        <td>
+                                            <small>@log.DetalleCambio</small>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>@log.SalarioDecimal.ToString("C")</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay cambios de salario registrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos Rápidos -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="bi bi-lightning"></i> Accesos Rápidos
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Create", "Employees")" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person-plus"></i><br>
+                            Nuevo Empleado
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Create", "Departments")" class="btn btn-outline-success w-100">
+                            <i class="bi bi-building-add"></i><br>
+                            Nuevo Departamento
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Payroll", "Reports")" class="btn btn-outline-info w-100">
+                            <i class="bi bi-file-earmark-text"></i><br>
+                            Reporte Nómina
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Index", "Audit")" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-shield-check"></i><br>
+                            Auditoría
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    .text-gray-300 {
+        color: #dddfeb !important;
+    }
+    .text-gray-800 {
+        color: #5a5c69 !important;
+    }
+</style>

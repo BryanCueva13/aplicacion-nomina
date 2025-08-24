@@ -1,0 +1,154 @@
+@model app.Models.Employee
+
+@{
+    ViewData["Title"] = "Eliminar Empleado";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-trash text-danger me-2"></i>
+        Eliminar Empleado
+    </h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Volver a Lista
+    </a>
+</div>
+
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        ¿Estás seguro de que deseas eliminar este empleado?
+    </h4>
+    <p>Esta acción <strong>no se puede deshacer</strong>. Se eliminarán todos los datos relacionados con este empleado.</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-person me-2"></i>
+                    Información del Empleado a Eliminar
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <div class="avatar-lg bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                        @Model.FullName.Substring(0, Math.Min(2, Model.FullName.Length)).ToUpper()
+                    </div>
+                    <h4>@Model.FullName</h4>
+                    <p class="text-muted">Empleado #@Model.EmpNo</p>
+                </div>
+                
+                <dl class="row">
+                    <dt class="col-sm-4">CI:</dt>
+                    <dd class="col-sm-8">@Model.CI</dd>
+                    
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+                    
+                    <dt class="col-sm-4">Género:</dt>
+                    <dd class="col-sm-8">@(Model.Gender == "M" ? "Masculino" : "Femenino")</dd>
+                    
+                    <dt class="col-sm-4">Nacimiento:</dt>
+                    <dd class="col-sm-8">@(Model.BirthDateTime?.ToString("dd/MM/yyyy") ?? Model.BirthDate)</dd>
+                    
+                    <dt class="col-sm-4">Contratación:</dt>
+                    <dd class="col-sm-8">@(Model.HireDatetime?.ToString("dd/MM/yyyy") ?? Model.HireDate)</dd>
+                    
+                    @if (Model.HireDatetime.HasValue)
+                    {
+                        var years = DateTime.Now.Year - Model.HireDatetime.Value.Year;
+                        if (DateTime.Now.DayOfYear < Model.HireDatetime.Value.DayOfYear) years--;
+                        <dt class="col-sm-4">Antigüedad:</dt>
+                        <dd class="col-sm-8">@years años</dd>
+                    }
+                    
+                    @if (Model.User != null)
+                    {
+                        <dt class="col-sm-4">Usuario:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-warning">@Model.User.Username (@Model.User.Role)</span>
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card border-warning">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Consecuencias de la Eliminación
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h6 class="alert-heading">Los siguientes datos se eliminarán:</h6>
+                    <ul class="mb-0">
+                        <li>Toda la información personal del empleado</li>
+                        <li>Histórico de departamentos asignados</li>
+                        <li>Histórico de títulos y cargos</li>
+                        <li>Histórico de salarios</li>
+                        <li>Registros de gestión de departamentos</li>
+                        @if (Model.User != null)
+                        {
+                            <li><strong>Usuario del sistema: @Model.User.Username</strong></li>
+                        }
+                    </ul>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-lightbulb me-1"></i>
+                        Alternativas
+                    </h6>
+                    <p class="mb-0">
+                        Considera <strong>desactivar</strong> al empleado en lugar de eliminarlo 
+                        para mantener el histórico de datos para futuros reportes y auditorías.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulario de confirmación -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="EmpNo" />
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-trash me-2"></i>
+                            Sí, eliminar definitivamente
+                        </button>
+                        
+                        <a asp-action="Details" asp-route-id="@Model.EmpNo" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>
+                            No, mantener empleado
+                        </a>
+                        
+                        <a asp-action="Index" class="btn btn-outline-primary">
+                            <i class="bi bi-list me-1"></i>
+                            Volver a lista de empleados
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .avatar-lg {
+            width: 80px;
+            height: 80px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    </style>
+}
