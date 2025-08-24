@@ -31,6 +31,17 @@
                 </div>
                 <h4 class="mb-1">@Model.FullName</h4>
                 <p class="text-muted mb-3">Empleado #@Model.EmpNo</p>
+                @if (ViewBag.CurrentDepartment != null)
+                {
+                    <span class="badge bg-info mb-2">
+                        <i class="bi bi-building me-1"></i>
+                        @ViewBag.CurrentDepartment
+                    </span>
+                }
+                <span class="badge @(ViewBag.IsManager == true ? "bg-warning text-dark" : "bg-secondary") mb-2">
+                    <i class="bi bi-person-badge me-1"></i>
+                    @(ViewBag.IsManager == true ? "Gerente" : "Empleado")
+                </span>
                 
                 @if (Model.User != null)
                 {

@@ -46,6 +46,24 @@ namespace app.Controllers
                 return NotFound();
             }
 
+
+            // Departamento actual (asignación activa)
+            var deptEmp = _context.DepartmentEmployees
+                .Include(de => de.Department)
+                .Where(de => de.EmpNo == id)
+                .AsEnumerable() // Traer a memoria para filtrar por fecha
+                .Where(de => de.ToDate == "9999-12-31" || string.IsNullOrEmpty(de.ToDate) || DateTime.Parse(de.ToDate) > DateTime.Now)
+                .OrderByDescending(de => de.FromDate)
+                .FirstOrDefault();
+            ViewBag.CurrentDepartment = deptEmp?.Department?.DeptName;
+
+            // ¿Es gerente?
+            var isManager = _context.DepartmentManagers
+                .Where(dm => dm.EmpNo == id)
+                .AsEnumerable()
+                .Any(dm => dm.ToDate == "9999-12-31" || string.IsNullOrEmpty(dm.ToDate) || DateTime.Parse(dm.ToDate) > DateTime.Now);
+            ViewBag.IsManager = isManager;
+
             return View(employee);
         }
 
@@ -54,13 +72,13 @@ namespace app.Controllers
         /// </summary>
         public IActionResult Create()
         {
+            ViewBag.Departments = _context.Departments.ToList();
             var employee = new Employee
             {
                 HireDate = DateTime.Now.ToString("yyyy-MM-dd"),
                 BirthDate = DateTime.Now.AddYears(-25).ToString("yyyy-MM-dd"),
                 Gender = "M"
             };
-            
             return View(employee);
         }
 
@@ -71,8 +89,15 @@ namespace app.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employee employee)
         {
+            int selectedDeptNo = 0;
+            if (Request.Form.ContainsKey("SelectedDeptNo"))
+            {
+                int.TryParse(Request.Form["SelectedDeptNo"], out selectedDeptNo);
+            }
             if (!ModelState.IsValid)
             {
+                ViewBag.Departments = _context.Departments.ToList();
+                ViewBag.SelectedDeptNo = selectedDeptNo;
                 return View(employee);
             }
 
@@ -85,11 +110,27 @@ namespace app.Controllers
                 _context.Employees.Add(employee);
                 await _context.SaveChangesAsync();
 
+                // Si se seleccionó un departamento, crear la asignación
+                if (selectedDeptNo > 0)
+                {
+                    var today = DateTime.Now.ToString("yyyy-MM-dd");
+                    var deptEmp = new DepartmentEmployee
+                    {
+                        EmpNo = employee.EmpNo,
+                        DeptNo = selectedDeptNo,
+                        FromDate = today,
+                        ToDate = "9999-12-31"
+                    };
+                    _context.DepartmentEmployees.Add(deptEmp);
+                    await _context.SaveChangesAsync();
+                }
+
                 TempData["SuccessMessage"] = $"Empleado {employee.FirstName} {employee.LastName} creado exitosamente.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
+                ViewBag.Departments = _context.Departments.ToList();
                 ModelState.AddModelError(string.Empty, "Error al crear el empleado. Inténtalo nuevamente.");
                 return View(employee);
             }

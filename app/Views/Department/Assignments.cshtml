@@ -1,0 +1,29 @@
+@model IEnumerable<app.Models.DepartmentEmployee>
+@{
+    ViewData["Title"] = "Asignaciones de Empleados";
+    var dept = ViewBag.Department as app.Models.Department;
+}
+<h2>Asignaciones de Empleados - @dept?.DeptName</h2>
+<a asp-action="Index" class="btn btn-secondary">Volver</a>
+<a asp-action="AddEmployee" asp-route-deptNo="@dept?.DeptNo" class="btn btn-success ms-2">Agregar Empleado</a>
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Employee.FirstName @item.Employee.LastName</td>
+            <td>@item.FromDate</td>
+            <td>@item.ToDate</td>
+            <td>@(item.IsActive ? "Sí" : "No")</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Agregar Empleado a Departamento";
+    var dept = ViewBag.Department as app.Models.Department;
+    var employees = ViewBag.Employees as List<app.Models.Employee>;
+}
+<h2>Agregar Empleado a @dept?.DeptName</h2>
+<a asp-action="Assignments" asp-route-id="@dept?.DeptNo" class="btn btn-secondary mb-3">Volver a Asignaciones</a>
+@if (employees == null || !employees.Any())
+{
+    <div class="alert alert-info">No hay empleados disponibles para asignar a este departamento.</div>
+}
+else
+{
+    <form asp-action="AddEmployee" asp-route-deptNo="@dept?.DeptNo" method="post">
+        <div class="mb-3">
+            <label for="empNo" class="form-label">Empleado</label>
+            <select id="empNo" name="empNo" class="form-select" required>
+                <option value="">Seleccione un empleado</option>
+                @foreach (var emp in employees)
+                {
+                    <option value="@emp.EmpNo">@emp.FirstName @emp.LastName (@emp.CI)</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="fromDate" class="form-label">Desde</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+        </div>
+        <div class="mb-3">
+            <label for="toDate" class="form-label">Hasta</label>
+            <input type="date" id="toDate" name="toDate" class="form-control" value="9999-12-31" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+    </form>
+}
