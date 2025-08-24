@@ -161,21 +161,103 @@
     </div>
 </div>
 
-<!-- Últimos Cambios de Salario -->
+<!-- Últimos Cambios en el Sistema -->
 <div class="row">
     <div class="col-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="bi bi-clock-history"></i> Últimos Cambios de Salario
+                    <i class="bi bi-clock-history"></i> Últimos Cambios en el Sistema
                 </h6>
                 <a href="@Url.Action("Index", "Audit")" class="btn btn-sm btn-outline-primary">
-                    Ver Todos
+                    Ver Auditoría Completa
                 </a>
             </div>
             <div class="card-body">
+                @if (ViewBag.DebugAudit != null)
+                {
+                    <div class="alert alert-info">
+                        <small>Debug: @ViewBag.DebugAudit</small>
+                    </div>
+                }
+
+                <!-- Mostrar cambios generales primero -->
+                @if (Model.RecentGeneralChanges.Any())
+                {
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-activity"></i> Actividad Reciente
+                    </h6>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Operación</th>
+                                    <th>Tabla</th>
+                                    <th>Empleado</th>
+                                    <th>Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var log in Model.RecentGeneralChanges)
+                                {
+                                    <tr>
+                                        <td>
+                                            <small>@log.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">@log.Usuario</span>
+                                        </td>
+                                        <td>
+                                            @{
+                                                string badgeClass = log.TipoOperacion == "CREATE" ? "bg-success" :
+                                                                   log.TipoOperacion == "UPDATE" ? "bg-warning text-dark" :
+                                                                   log.TipoOperacion == "DELETE" ? "bg-danger" : "bg-info";
+                                            }
+                                            <span class="badge @badgeClass">@log.TipoOperacionDescripcion</span>
+                                        </td>
+                                        <td>
+                                            @{
+                                                string tableClass = log.Tabla == "employees" ? "text-primary" :
+                                                                  log.Tabla == "salaries" ? "text-success" :
+                                                                  log.Tabla == "titles" ? "text-info" :
+                                                                  log.Tabla.Contains("dept") ? "text-warning" : "text-secondary";
+                                            }
+                                            <span class="@tableClass fw-bold">@log.TablaDescripcion</span>
+                                        </td>
+                                        <td>
+                                            @if (log.Employee != null)
+                                            {
+                                                <a href="/Employees/Details/@log.EmpNo" class="text-decoration-none">
+                                                    @log.Employee.FullName
+                                                </a>
+                                            }
+                                            else if (log.EmpNo.HasValue)
+                                            {
+                                                <span class="text-muted">Empleado #@log.EmpNo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">N/A</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <small>@log.DetalleCambio</small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                <!-- Mostrar cambios de salarios si los hay -->
                 @if (Model.RecentSalaryChanges.Any())
                 {
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-cash-coin"></i> Cambios de Salario
+                    </h6>
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead>
@@ -194,7 +276,18 @@
                                         <td>
                                             <small>@log.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")</small>
                                         </td>
-                                        <td>@log.Employee.FullName</td>
+                                        <td>
+                                            @if (log.Employee != null)
+                                            {
+                                                <a href="/Employees/Details/@log.EmpNo" class="text-decoration-none">
+                                                    @log.Employee.FullName
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Empleado #@log.EmpNo</span>
+                                            }
+                                        </td>
                                         <td>
                                             <span class="badge bg-secondary">@log.Usuario</span>
                                         </td>
@@ -210,9 +303,23 @@
                         </table>
                     </div>
                 }
-                else
+
+                <!-- Mensaje cuando no hay ningún tipo de auditoría -->
+                @if (!Model.RecentGeneralChanges.Any() && !Model.RecentSalaryChanges.Any())
                 {
-                    <p class="text-muted">No hay cambios de salario registrados.</p>
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-exclamation-triangle"></i> No hay cambios registrados</h6>
+                        <p class="mb-1">No se encontraron cambios recientes en el sistema.</p>
+                        <small>Para generar entradas de auditoría, realiza las siguientes acciones:</small>
+                        <ul class="mt-2 mb-2">
+                            <li>Crea, edita o elimina empleados</li>
+                            <li>Modifica salarios o títulos</li>
+                            <li>Realiza cambios en departamentos</li>
+                        </ul>
+                        <a href="/Employees/Create" class="btn btn-sm btn-primary">Crear Empleado</a>
+                        <a href="/Salaries/Create" class="btn btn-sm btn-success">Crear Salario</a>
+                        <a href="/Audit/Test" class="btn btn-sm btn-warning">Crear Entrada de Prueba</a>
+                    </div>
                 }
             </div>
         </div>
@@ -237,7 +344,7 @@
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <a href="@Url.Action("Create", "Departments")" class="btn btn-outline-success w-100">
+                        <a href="@Url.Action("Create", "Department")" class="btn btn-outline-success w-100">
                             <i class="bi bi-building-add"></i><br>
                             Nuevo Departamento
                         </a>

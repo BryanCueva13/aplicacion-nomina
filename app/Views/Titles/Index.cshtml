@@ -1,0 +1,33 @@
+@model IEnumerable<app.Models.Title>
+@{
+    ViewData["Title"] = "Títulos/Cargos";
+}
+<h2>Títulos/Cargos</h2>
+<!-- Mensaje de éxito mostrado desde el layout -->
+<a class="btn btn-primary mb-3" asp-action="Create">Nuevo Título</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Título</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Employee.FirstName @item.Employee.LastName</td>
+            <td>@item.TitleName</td>
+            <td>@item.FromDate</td>
+            <td>@item.ToDate</td>
+            <td>
+                <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-route-empNo="@item.EmpNo" asp-route-fromDate="@item.FromDate" asp-route-titleName="@item.TitleName">Editar</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-empNo="@item.EmpNo" asp-route-fromDate="@item.FromDate" asp-route-titleName="@item.TitleName">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,12 @@
+@model app.Models.Salary
+@{
+    ViewData["Title"] = "Eliminar Salario";
+}
+<h2>Eliminar Salario</h2>
+<div class="alert alert-warning">¿Desea eliminar el registro de salario de <strong>@Model.Employee.FirstName @Model.Employee.LastName</strong> (salario: <strong>@Model.SalaryDecimal.ToString("C")</strong>)?</div>
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="EmpNo" value="@Model.EmpNo" />
+    <input type="hidden" name="FromDate" value="@Model.FromDate" />
+    <button class="btn btn-danger" type="submit">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

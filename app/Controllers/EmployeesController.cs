@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using app.Data;
 using app.Models;
+using app.Services;
 
 namespace app.Controllers
 {
@@ -13,10 +14,12 @@ namespace app.Controllers
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public EmployeesController(ApplicationDbContext context)
+        public EmployeesController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         /// <summary>
@@ -110,6 +113,11 @@ namespace app.Controllers
                 _context.Employees.Add(employee);
                 await _context.SaveChangesAsync();
 
+                // Registrar en auditoría
+                await _auditService.LogGeneralChangeAsync("employees", "CREATE", 
+                    $"Nuevo empleado creado: {employee.FirstName} {employee.LastName} (EmpNo: {employee.EmpNo})", 
+                    User.Identity?.Name ?? "Sistema", employee.EmpNo, $"emp_{employee.EmpNo}");
+
                 // Si se seleccionó un departamento, crear la asignación
                 if (selectedDeptNo > 0)
                 {
@@ -123,6 +131,12 @@ namespace app.Controllers
                     };
                     _context.DepartmentEmployees.Add(deptEmp);
                     await _context.SaveChangesAsync();
+
+                    // Registrar asignación de departamento en auditoría
+                    var dept = await _context.Departments.FindAsync(selectedDeptNo);
+                    await _auditService.LogGeneralChangeAsync("dept_emp", "CREATE", 
+                        $"Empleado {employee.FirstName} {employee.LastName} asignado al departamento {dept?.DeptName ?? selectedDeptNo.ToString()}", 
+                        User.Identity?.Name ?? "Sistema", employee.EmpNo, $"emp_{employee.EmpNo}_dept_{selectedDeptNo}");
                 }
 
                 TempData["SuccessMessage"] = $"Empleado {employee.FirstName} {employee.LastName} creado exitosamente.";
@@ -172,8 +186,31 @@ namespace app.Controllers
 
             try
             {
+                // Obtener datos anteriores para auditoría
+                var originalEmployee = await _context.Employees.AsNoTracking().FirstAsync(e => e.EmpNo == id);
+                
                 _context.Update(employee);
                 await _context.SaveChangesAsync();
+
+                // Registrar cambios en auditoría
+                var cambios = new List<string>();
+                if (originalEmployee.FirstName != employee.FirstName)
+                    cambios.Add($"Nombre: {originalEmployee.FirstName} → {employee.FirstName}");
+                if (originalEmployee.LastName != employee.LastName)
+                    cambios.Add($"Apellido: {originalEmployee.LastName} → {employee.LastName}");
+                if (originalEmployee.Gender != employee.Gender)
+                    cambios.Add($"Género: {originalEmployee.Gender} → {employee.Gender}");
+                if (originalEmployee.BirthDate != employee.BirthDate)
+                    cambios.Add($"Fecha nacimiento: {originalEmployee.BirthDate:yyyy-MM-dd} → {employee.BirthDate:yyyy-MM-dd}");
+                if (originalEmployee.HireDate != employee.HireDate)
+                    cambios.Add($"Fecha contratación: {originalEmployee.HireDate:yyyy-MM-dd} → {employee.HireDate:yyyy-MM-dd}");
+
+                if (cambios.Any())
+                {
+                    await _auditService.LogGeneralChangeAsync("employees", "UPDATE", 
+                        $"Empleado modificado: {string.Join(", ", cambios)}", 
+                        User.Identity?.Name ?? "Sistema", employee.EmpNo, $"emp_{employee.EmpNo}");
+                }
 
                 TempData["SuccessMessage"] = $"Empleado {employee.FirstName} {employee.LastName} actualizado exitosamente.";
                 return RedirectToAction(nameof(Index));

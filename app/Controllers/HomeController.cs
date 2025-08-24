@@ -45,20 +45,61 @@ namespace app.Controllers
                            e.HireDatetime.Value.Year == currentYear)
                 .Count();
 
-            // Últimos cambios de salario (auditoría)
-            dashboardData.RecentSalaryChanges = await _auditService.GetRecentAuditLogsAsync(10);
+            // Últimos cambios en el sistema (auditoría completa)
+            try
+            {
+                // Intentar obtener auditoría general primero
+                try
+                {
+                    dashboardData.RecentGeneralChanges = await _auditService.GetAllAuditLogsAsync(10);
+                    var totalGeneralLogs = await _context.GeneralAuditLogs.CountAsync();
+                    ViewBag.TotalGeneralLogs = totalGeneralLogs;
+                }
+                catch (Exception ex)
+                {
+                    dashboardData.RecentGeneralChanges = new List<app.Models.GeneralAuditLog>();
+                    ViewBag.TotalGeneralLogs = 0;
+                    ViewBag.ErrorGeneral = $"Tabla Log_Auditoria_General no existe: {ex.Message}";
+                }
+
+                // Intentar obtener auditoría de salarios
+                try
+                {
+                    dashboardData.RecentSalaryChanges = await _auditService.GetRecentAuditLogsAsync(5);
+                    var totalSalaryLogs = await _context.AuditLogs.CountAsync();
+                    ViewBag.TotalSalaryLogs = totalSalaryLogs;
+                }
+                catch (Exception ex)
+                {
+                    dashboardData.RecentSalaryChanges = new List<app.Models.AuditLog>();
+                    ViewBag.TotalSalaryLogs = 0;
+                    ViewBag.ErrorSalary = $"Tabla Log_AuditoriaSalarios no existe: {ex.Message}";
+                }
+
+                ViewBag.DebugAudit = $"General: {dashboardData.RecentGeneralChanges.Count}, Salarios: {dashboardData.RecentSalaryChanges.Count}";
+            }
+            catch (Exception ex)
+            {
+                dashboardData.RecentGeneralChanges = new List<app.Models.GeneralAuditLog>();
+                dashboardData.RecentSalaryChanges = new List<app.Models.AuditLog>();
+                ViewBag.DebugAudit = $"Error cargando auditoría: {ex.Message}";
+            }
 
             // Empleados por departamento (usando ToDateTime para poder consultar)
-            dashboardData.EmployeesByDepartment = await _context.DepartmentEmployees
-                .Include(de => de.Department)
-                .Where(de => de.ToDate == "9999-12-31") // Asignaciones activas
-                .GroupBy(de => de.Department.DeptName)
+            // Traer todas las asignaciones y filtrar en memoria para evitar duplicados y problemas de fechas
+            var allAssignments = await _context.DepartmentEmployees.Include(de => de.Department).ToListAsync();
+            var activeAssignments = allAssignments
+                .Where(de => de.ToDate == "9999-12-31" || string.IsNullOrEmpty(de.ToDate) || (DateTime.TryParse(de.ToDate, out var toDate) && toDate > DateTime.Now))
+                .GroupBy(de => new { de.DeptNo, de.Department.DeptName, de.EmpNo })
+                .Select(g => new { g.Key.DeptNo, g.Key.DeptName, g.Key.EmpNo })
+                .GroupBy(x => x.DeptName)
                 .Select(g => new EmployeesByDepartmentItem
                 {
                     DepartmentName = g.Key,
                     Count = g.Count()
                 })
-                .ToListAsync();
+                .ToList();
+            dashboardData.EmployeesByDepartment = activeAssignments;
 
             // Próximos empleados con aniversario (obtener todos y filtrar en memoria)
             var thirtyDaysFromNow = DateTime.Now.AddDays(30);
@@ -109,6 +150,7 @@ namespace app.Controllers
         public int ActiveUsers { get; set; }
         public int NewEmployeesThisMonth { get; set; }
         public List<app.Models.AuditLog> RecentSalaryChanges { get; set; } = new();
+        public List<app.Models.GeneralAuditLog> RecentGeneralChanges { get; set; } = new();
         public List<EmployeesByDepartmentItem> EmployeesByDepartment { get; set; } = new();
         public List<UpcomingAnniversaryItem> UpcomingAnniversaries { get; set; } = new();
     }

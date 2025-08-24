@@ -1,0 +1,35 @@
+@model app.Models.Salary
+@{
+    ViewData["Title"] = "Nuevo Salario";
+    var employees = ViewBag.Employees as List<app.Models.Employee>;
+}
+<h2>Nuevo Salario</h2>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label for="EmpNo" class="form-label">Empleado</label>
+        <select id="EmpNo" name="EmpNo" class="form-select" required>
+            <option value="">Seleccione un empleado</option>
+            @foreach (var emp in employees)
+            {
+                <option value="@emp.EmpNo">@emp.FirstName @emp.LastName (@emp.CI)</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SalaryAmount" class="form-label">Salario</label>
+        <input asp-for="SalaryAmount" class="form-control" required />
+        <span asp-validation-for="SalaryAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FromDate" class="form-label">Desde</label>
+        <input asp-for="FromDate" type="date" class="form-control" required />
+        <span asp-validation-for="FromDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ToDate" class="form-label">Hasta</label>
+        <input asp-for="ToDate" type="date" class="form-control" />
+        <span asp-validation-for="ToDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

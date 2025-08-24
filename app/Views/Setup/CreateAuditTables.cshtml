@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Crear Tablas de Auditoría";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4><i class="fas fa-database"></i> Resultado de Creación de Tablas</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-info">
+                            <h5>@ViewBag.Message</h5>
+                            @if (ViewBag.Details != null)
+                            {
+                                <p class="mb-0">@ViewBag.Details</p>
+                            }
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <h6>¿Qué se ha configurado?</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-table text-primary"></i>
+                                <strong>Log_Auditoria_General</strong> - Tabla para auditoría completa del sistema
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-table text-success"></i>
+                                <strong>Log_AuditoriaSalarios</strong> - Tabla específica para cambios de salarios
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-key text-warning"></i>
+                                <strong>Claves primarias</strong> - Configuradas con IDENTITY para auto-incremento
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-link text-info"></i>
+                                <strong>Foreign Keys</strong> - Referencias a tabla de empleados
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6>Próximos pasos</h6>
+                        <div class="alert alert-light">
+                            <ol>
+                                <li>Visita la <a href="@Url.Action("Index", "Audit")">página de auditoría</a> para verificar que funciona</li>
+                                <li>Crea o edita algunos empleados/salarios para generar entradas de auditoría</li>
+                                <li>Revisa el <a href="@Url.Action("Index", "Home")">dashboard</a> para ver los últimos cambios</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="btn-group mt-4" role="group">
+                        <a href="@Url.Action("Index", "Audit")" class="btn btn-primary">
+                            <i class="fas fa-history"></i> Ver Auditoría
+                        </a>
+                        <a href="@Url.Action("Index", "Setup")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a Setup
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-success">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

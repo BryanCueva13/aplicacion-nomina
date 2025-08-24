@@ -1,0 +1,13 @@
+@model app.Models.Title
+@{
+    ViewData["Title"] = "Eliminar Título/Cargo";
+}
+<h2>Eliminar Título/Cargo</h2>
+<div class="alert alert-warning">¿Desea eliminar el título <strong>@Model.TitleName</strong> del empleado <strong>@Model.Employee.FirstName @Model.Employee.LastName</strong>?</div>
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="EmpNo" value="@Model.EmpNo" />
+    <input type="hidden" name="FromDate" value="@Model.FromDate" />
+    <input type="hidden" name="TitleName" value="@Model.TitleName" />
+    <button class="btn btn-danger" type="submit">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

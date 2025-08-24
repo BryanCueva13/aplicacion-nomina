@@ -19,10 +19,9 @@ namespace app.Data
         public DbSet<DepartmentManager> DepartmentManagers { get; set; }
         public DbSet<Title> Titles { get; set; }
         public DbSet<Salary> Salaries { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public DbSet<User> Users { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
+    public DbSet<GeneralAuditLog> GeneralAuditLogs { get; set; }        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -111,6 +110,7 @@ namespace app.Data
             modelBuilder.Entity<AuditLog>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Configurar como auto-incremento
                 entity.Property(e => e.Usuario).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.DetalleCambio).IsRequired().HasMaxLength(250);
                 entity.HasOne(d => d.Employee)

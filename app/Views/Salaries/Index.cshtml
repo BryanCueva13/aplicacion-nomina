@@ -1,0 +1,33 @@
+@model IEnumerable<app.Models.Salary>
+@{
+    ViewData["Title"] = "Salarios";
+}
+<h2>Salarios</h2>
+<!-- Mensaje de éxito mostrado desde el layout -->
+<a class="btn btn-primary mb-3" asp-action="Create">Nuevo Salario</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Salario</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Employee.FirstName @item.Employee.LastName</td>
+            <td>@item.SalaryDecimal.ToString("C")</td>
+            <td>@item.FromDate</td>
+            <td>@item.ToDate</td>
+            <td>
+                <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-route-empNo="@item.EmpNo" asp-route-fromDate="@item.FromDate">Editar</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-empNo="@item.EmpNo" asp-route-fromDate="@item.FromDate">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,31 @@
+@model app.Models.Title
+@{
+    ViewData["Title"] = "Editar Título/Cargo";
+}
+<h2>Editar Título/Cargo</h2>
+<form asp-action="Edit" asp-route-empNo="@Model.EmpNo" asp-route-fromDate="@Model.FromDate" asp-route-titleName="@Model.TitleName" method="post">
+    <input type="hidden" name="EmpNo" value="@Model.EmpNo" />
+    <input type="hidden" name="FromDate" value="@Model.FromDate" />
+    <input type="hidden" name="TitleName" value="@Model.TitleName" />
+    <div class="mb-3">
+        <label class="form-label">Empleado</label>
+        <input class="form-control" value="@Model.Employee.FirstName @Model.Employee.LastName" disabled />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Título</label>
+        <input class="form-control" value="@Model.TitleName" disabled />
+        <small class="form-text text-muted">El título no se puede modificar (es parte de la clave)</small>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Desde</label>
+        <input class="form-control" value="@Model.FromDate" disabled />
+        <small class="form-text text-muted">La fecha de inicio no se puede modificar (es parte de la clave)</small>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hasta</label>
+        <input class="form-control" name="ToDate" value="@Model.ToDate" />
+        <small class="form-text text-muted">Deje vacío para indicar que el título sigue vigente</small>
+    </div>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
