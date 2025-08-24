@@ -252,4 +252,51 @@ namespace app.ViewModels
 
         public string? EmployeeName { get; set; }
     }
+
+    /// <summary>
+    /// ViewModel para reporte de nómina
+    /// </summary>
+    public class PayrollReportViewModel
+    {
+        public int EmpNo { get; set; }
+        public string CI { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public decimal CurrentSalary { get; set; }
+        public string HireDate { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// ViewModel para reporte de estructura organizacional
+    /// </summary>
+    public class OrganizationalReportViewModel
+    {
+        public int DeptNo { get; set; }
+        public string DepartmentName { get; set; } = string.Empty;
+        public ManagerInfo? Manager { get; set; }
+        public List<EmployeeInfo> Employees { get; set; } = new();
+        public int EmployeeCount { get; set; }
+    }
+
+    /// <summary>
+    /// Información del gerente para el reporte organizacional
+    /// </summary>
+    public class ManagerInfo
+    {
+        public int EmpNo { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string FromDate { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Información del empleado para el reporte organizacional
+    /// </summary>
+    public class EmployeeInfo
+    {
+        public int EmpNo { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string FromDate { get; set; } = string.Empty;
+    }
 }
